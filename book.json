@@ -1,6 +1,4 @@
 {
-    "plugins": [
-        "customheader"
-    ],
+    "plugins": [],
     "pluginsConfig": {}
 }
