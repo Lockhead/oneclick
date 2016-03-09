@@ -20,9 +20,9 @@ Abstract
    This document describes a simplified method for signaling "One-Click"
    functionality in HTTP URIs as they appear in email headers.  The need
    for this arises out of the fact, that third-party entities involved
-   in the processing of emails sometimes unintended trigger actions that
-   are subject to the user and shall not be triggered automatically
-   without an user's intend.
+   in the processing of emails sometimes unintendedly trigger actions
+   that are subject to the user and shall not be triggered automatically
+   without an user's intent.
 
 1.  Definitions
 
@@ -33,7 +33,7 @@ Abstract
    a.  "One-Click":  In the context of this document, describes an HTTP
        URI that directly triggers a change in a system that shall only
        be applied if the request to that HTTP URI is done with an
-       user's intend.
+       user's intent.
 
    b.  "Organizational Domain":  Is to be interpreted as described in
        [RFC7489#section-3]
@@ -45,20 +45,19 @@ Abstract
 
 2.  Introduction
 
-   Some email header can contain HTTP URIs for extended functionality,
-   for example the List-Headers [RFC2369].  In the case of the
-   List-Unsubscribe Header the HTTP URI is mandated to unsubscribe the
-   recipient of the email directly from the list.  But this requirement
-   is often not implemented because of unintended malicious behavior by
-   anti-spam solutions, because they requesting all found external
-   resources for checks.  So senders implemented landing pages who ask
-   for a second step to confirm a unsubscribe request.  This
-   specification tries to solve one part of this, as it proposes a
-   pattern to detect "One-Click" functionality.  It defines the fragment
-   part of the HTTP URI and a transformation and exploits the fact that
-   the fragment part of the HTTP URI is not transferred to the host. So
-   a request to the HTTP URI that adheres to this specification can be
-   distinguished from other requests.
+   An email header can contain HTTP URIs for extended functionality,
+   for example List-Headers [RFC2369].  In case of the List-Unsubscribe
+   Header the HTTP URI is mandated to unsubscribe the recipient of the
+   email directly from the list.  This requirement is often not
+   implemented because anti-spam solutions request all found external
+   resources which is considered unintended malicious behavior. In
+   consequence senders implement landing pages asking to confirm the
+   unsubscribe request.  This specification tries to solve one part of
+   this, as it proposes a pattern to detect "One-Click" functionality.
+   It defines the fragment part of the HTTP URI and a transformation
+   and uses the fact that the fragment part of the HTTP URI is not
+   transferred to the host. A request to the HTTP URI that adheres to
+   this specification can be distinguished from other requests.
 
 3.  High-Level Goals
 
@@ -133,7 +132,7 @@ Abstract
 
 6.2  Extended
 
-   This link already have parameters.
+   This link already has parameters.
 
       List-Unsubscribe:
       <https://example.com/unsubscribe.html?campaign=123456789#List-
