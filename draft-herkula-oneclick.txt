@@ -3,7 +3,7 @@ draft-herkula-oneclick.txt                                   optivo GmbH
                                                               March 2016
 
 
-   Signaling "One-Click" functionality in HTTP URIs in email headers
+   Signaling "One-Click" functionality for HTTP URIs in email headers
 
 Status of this Memo
 
@@ -18,11 +18,11 @@ Copyright Notice
 Abstract
 
    This document describes a simplified method for signaling "One-Click"
-   functionality in HTTP URIs as they appear in email headers.  The need
-   for this arises out of the fact, that third-party entities involved
-   in the processing of emails sometimes unintendedly trigger actions
-   that are subject to the user and shall not be triggered automatically
-   without an user's intent.
+   functionality for HTTP URIs as they appear in email headers.  The
+   need for this arises out of the fact, that third-party entities
+   involved in the processing of emails sometimes unintendedly trigger
+   actions that are subject to the user and shall not be triggered
+   automatically without an user's intent.
 
 1.  Definitions
 
@@ -50,14 +50,15 @@ Abstract
    Header the HTTP URI is mandated to unsubscribe the recipient of the
    email directly from the list.  This requirement is often not
    implemented because anti-spam solutions request all found external
-   resources which is considered unintended malicious behavior. In
+   resources, this is considered unintended malicious behavior. In
    consequence senders implement landing pages asking to confirm the
    unsubscribe request.  This specification tries to solve one part of
    this, as it proposes a pattern to detect "One-Click" functionality.
-   It defines the fragment part of the HTTP URI and a transformation
-   and uses the fact that the fragment part of the HTTP URI is not
-   transferred to the host. A request to the HTTP URI that adheres to
-   this specification can be distinguished from other requests.
+   It defines a specific format for the fragment part of a HTTP URI and
+   a specific transformation for the receiver. A request to the
+   transformed HTTP URI from somebody who adheres to this specification
+   can be distinguished from other requests and therefore handled
+   independently.
 
 3.  High-Level Goals
 
@@ -76,13 +77,6 @@ Abstract
    malicious behavior by users or robots.
 
 5.  Implementation
-
-   To mitigate unintended malicious actions, this specification uses the
-   fact that the fragment of an HTTP URI is not transferred when a
-   request is done, so that a sending entity could distinguish HTTP
-   requests that adhere to this specification between regular HTTP
-   requests.  To achieve the high-level goals, the implementation is
-   split into parts for the sending entity and the receiving entity.
 
 5.1  Sender
 
