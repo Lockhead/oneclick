@@ -1,9 +1,9 @@
 INFORMATIONAL                                             Tobias Herkula
 draft-herkula-oneclick.txt                                   optivo GmbH
-                                                              March 2016
+                                                               June 2016
 
 
-   Signaling "One-Click" functionality for HTTP URIs in email headers
+   Signaling "One-Click" functionality for HTTPS URIs in email headers
 
 Status of this Memo
 
@@ -18,7 +18,7 @@ Copyright Notice
 Abstract
 
    This document describes a simplified method for signaling "One-Click"
-   functionality for HTTP URIs as they appear in email headers.  The
+   functionality for HTTPS URIs as they appear in email headers.  The
    need for this arises out of the fact, that third-party entities
    involved in the processing of emails sometimes unintendedly trigger
    actions that are subject to the user and shall not be triggered
@@ -30,9 +30,9 @@ Abstract
    "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this
    document are to be interpreted as described in [RFC2119].
 
-   a.  "One-Click":  In the context of this document, describes an HTTP
+   a.  "One-Click":  In the context of this document, describes an HTTPS
        URI that directly triggers a change in a system that shall only
-       be applied if the request to that HTTP URI is done with an
+       be applied if the request to that HTTPS URI is done with an
        user's intent.
 
    b.  "Organizational Domain":  Is to be interpreted as described in
@@ -45,25 +45,25 @@ Abstract
 
 2.  Introduction
 
-   An email header can contain HTTP URIs for extended functionality,
+   An email header can contain HTTPS URIs for extended functionality,
    for example List-Headers [RFC2369].  In case of the List-Unsubscribe
-   Header the HTTP URI is mandated to unsubscribe the recipient of the
+   Header the HTTPS URI is mandated to unsubscribe the recipient of the
    email directly from the list.  This requirement is often not
    implemented because anti-spam solutions request all found external
    resources, this is considered unintended malicious behavior. In
    consequence senders implement landing pages asking to confirm the
    unsubscribe request.  This specification tries to solve one part of
    this, as it proposes a pattern to detect "One-Click" functionality.
-   It defines a specific format for the fragment part of a HTTP URI and
+   It defines a specific format for the fragment part of a HTTPS URI and
    a specific transformation for the receiver. A request to the
-   transformed HTTP URI from somebody who adheres to this specification
+   transformed HTTPS URI from somebody who adheres to this specification
    can be distinguished from other requests and therefore handled
    independently.
 
 3.  High-Level Goals
 
    o  Allow email senders to signal "One-Click" functionality for
-      specific HTTP URIs used in email headers.
+      specific HTTPS URIs used in email headers.
 
    o  Allow MUA owners to implement independent user interface features
       for a better user experience.
@@ -81,19 +81,34 @@ Abstract
 5.1  Sender
 
    A sending entity which is responsible for the content of an email,
-   that wishes to add an actionable HTTP URI in the header of an email,
+   that wishes to add an actionable HTTPS URI in the header of an email,
    shall add the name of the Header followed by signal-constant, as the
-   URI fragment.
+   URI fragment. The sending entity also needs to provide the infrastructure
+   to handle GET and or POST requests to this URI in an appropriate volume.
+
+   The "One-Click" action triggered by such URIs must complete in an appropriate
+   timeframe and should never burden the requester in an inappropriate way.
+   The sending entity cannot expect that HTTP redirects are followed by the
+   requester.
+
+   Repeated requests to the same URI must be handled like all other requests.
 
 5.2  Receiver
 
-   A receiving entity which wants to use a HTTP URI that signals
+   A receiving entity which wants to use a HTTPS URI that signals
    "One-Click" functionality, shall take the key-value pair out of the
    fragment part of the URI and add it as additional URI key-value
    parameter to the corresponding URI before requesting it.  The
-   receiving entity shall not request the HTTP URI without user consent.
+   receiving entity shall not request the HTTPS URI without user consent.
    When and how the user consent is obtained is not part of this
-   specification.
+   specification. The Request must use the HTTP verbs GET or POST, other
+   verbs are not permitted as especially the HEAD request should never be used
+   in cases where a state change is triggered. PUT and DELETE would offer
+   similar functionality but are often not implemented correctly or are not
+   implemented at all.
+
+   The requester should not follow redirects and should interpret all 3xx HTTP
+   status codes as a success signal.
 
 5.3  Additional Requirements
 
@@ -105,7 +120,7 @@ Abstract
    The corresponding header needs to be included in the "h=" tag of a
    valid DKIM-Signature header field.
 
-   The domain used in the HTTP URI shall align to the domain used in the
+   The domain used in the HTTPS URI shall align to the domain used in the
    RFC5322.From field or to the domain in the "d=" tag of the valid
    DKIM-Signature header field in which the header is listed in the
    "h=" tag.
@@ -120,7 +135,7 @@ Abstract
       List-Unsubscribe: <https://example.com/unsubscribe.html#List-
       Unsubscribe=One-Click>
 
-   A mailbox provider shall request that HTTP URI in this form:
+   A mailbox provider shall request that HTTPS URI in this form:
 
       https://example.com/unsubscribe.html?List-Unsubscribe=One-Click
 
@@ -132,7 +147,7 @@ Abstract
       <https://example.com/unsubscribe.html?campaign=123456789#List-
       Unsubscribe=One-Click>
 
-   A mailbox provider shall request that HTTP URI in this form:
+   A mailbox provider shall request that HTTPS URI in this form:
 
       https://example.com/unsubscribe.html?campaign=123456789&List-
       Unsubscribe=One-Click
