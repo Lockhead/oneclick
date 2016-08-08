@@ -4,6 +4,7 @@
         <!ENTITY RFC2119 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.2119.xml">
         <!ENTITY RFC2369 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.2369.xml">
         <!ENTITY RFC6376 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.6376.xml">
+        <!ENTITY RFC7578 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.7578.xml">
         ]>
 <?rfc compact="yes" ?>
 <?rfc subcompact="no" ?>
@@ -13,7 +14,7 @@
 <?rfc symrefs="yes" ?>
 <?rfc sortrefs="yes"?>
 <?rfc iprnotified="no" ?>
-<rfc category="std" docName="draft-levine-herkula-oneclick-01" ipr="trust200902">
+<rfc category="std" docName="draft-levine-herkula-oneclick-03" ipr="trust200902">
     <front>
         <title abbrev="One click unsubscribe">Signalling one-click functionality for list email headers</title>
         <author fullname="John Levine" initials="J." surname="Levine">
@@ -51,10 +52,13 @@
         <abstract>
             <t>
                 This document describes a method for signaling a one-click function for
-                the list-unsubscribe email header. The need for this arises out of the
-                actuality that mail software sometimes fetches URLs in mail headers, and
-                thereby accidentally triggers unsubcriptions in the case of the
-                list-unsubscribe header.
+                HTTP URLs used in the list-unsubscribe email header.  The need for this
+                arises out of the actuality that mail software sometimes fetches URLs in
+                mail headers, and thereby accidentally triggers unsubcriptions in the case
+                of the list-unsubscribe header.  This specification prevents this for
+                unintended cases of the described issue.  Compared to the also available
+                mailto handler, provides this process a direct response if the unsubscribe
+                request was successful.
             </t>
         </abstract>
     </front>
@@ -62,7 +66,7 @@
         <section title="Introduction">
             <t>
                 An <xref target="RFC2369" /> email header can contain HTTP or HTTPS URIs. In a
-                List-Unsubscribe Header the HTTP or HTTPS URI should unsubscribe the
+                List-Unsubscribe Header the HTTP or HTTPS URI is intended to unsubscribe the
                 recipient of the email from the list. But anti-spam software often
                 fetches all resources in mail headers automatically, without any action
                 by the user.
@@ -138,22 +142,31 @@
             </section>
             <section title="Mail receivers">
                 <t>
-                    A receiving entity which wants to use a List-Unsubscribe HTTP URI from
-                    an email that also contains a List-Unsubscribe-Post header performs an
-                    HTTP or HTTPS POST to the first HTTP or HTTPS URI in the
-                    List-Unsubscribe header and send the content of the
-                    List-Unsubscribe-Post header as request body with the content type set
-                    to "application/x-www-form-urlencoded".
+                    A receiving entity which wants to use a List-Unsubscribe HTTP URI
+                    from an email that also contains a List-Unsubscribe-Post header
+                    performs an HTTP or HTTPS POST to the first HTTP or HTTPS URI in the
+                    List-Unsubscribe header and send the content of the List-Unsubscribe-
+                    Post header as the request body.
+                </t>
+                <t>
+                    The POST content SHOULD be sent as "multipart/form-data" <xref target="RFC7578" />
+                    and MAY be sent as "application/x-www-form-urlencoded".  These
+                    encodings are the ones used by web browsers when sending forms.  The
+                    target of the POST action will typically be the same as or similar to
+                    the one in the confirmation page when doing a manual two-click
+                    unsubscribe, so this is intended to allow the same server code to
+                    handle both.
                 </t>
                 <t>
                     The receiving entity MUST NOT perform a POST on the the HTTP or HTTPS
-                    URI without user consent.  When and how the user consent is obtained is
-                    not part of this specification.
+                    URI without user consent.  When and how the user consent is obtained
+                    is not part of this specification.
                 </t>
                 <t>
-                    The Request uses the HTTP or HTTPS verb POST. The HEAD and GET requests
-                    are not intended to be used to trigger a state change.  PUT and DELETE
-                    would offer similar functionality but are often unavailable.
+                    The Request uses the HTTP or HTTPS verb POST.  The HEAD and GET
+                    requests are not intended to be used to trigger a state change.  PUT
+                    and DELETE would offer similar functionality but are often
+                    unavailable.
                 </t>
             </section>
         </section>
@@ -167,11 +180,6 @@
             <t>
                 The List-Unsubscribe and List-Unsubscribe-Post headers need to be
                 included in the "h=" tag of a valid DKIM-Signature header field.
-            </t>
-            <t>
-                The domain used in the HTTP or HTTPS URI MUST align with the domain used
-                in the "d=" tag of the valid DKIM-Signature header field in which the
-                headers are included in the "h=" tag.
             </t>
         </section>
         <section title="IANA Considerations">
@@ -253,6 +261,7 @@ List-Unsubscribe=One-Click&recip=user@example.com
             &RFC2119;
             &RFC2369;
             &RFC6376;
+            &RFC7578;
         </references>
     </back>
 </rfc>
