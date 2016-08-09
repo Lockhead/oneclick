@@ -45,36 +45,50 @@
                 <uri>https://www.optivo.com</uri>
             </address>
         </author>
-        <date month="July" year="2016"/>
+        <date month="August" year="2016"/>
         <area>Operations and Management</area>
         <keyword>email</keyword>
         <keyword>mailing list</keyword>
         <abstract>
             <t>
                 This document describes a method for signaling a one-click function for
-                HTTP URLs used in the list-unsubscribe email header.  The need for this
-                arises out of the actuality that mail software sometimes fetches URLs in
-                mail headers, and thereby accidentally triggers unsubcriptions in the case
-                of the list-unsubscribe header.  This specification prevents this for
-                unintended cases of the described issue.  Compared to the also available
-                mailto handler, provides this process a direct response if the unsubscribe
-                request was successful.
+                the list-unsubscribe email header. The need for this arises out of the
+                actuality that mail software sometimes fetches URLs in mail headers, and
+                thereby accidentally triggers unsubcriptions in the case of the
+                list-unsubscribe header.
             </t>
         </abstract>
     </front>
     <middle>
         <section title="Introduction">
             <t>
-                An <xref target="RFC2369" /> email header can contain HTTP or HTTPS URIs. In a
+                An <xref target="RFC2369"/>
+                email header can contain HTTP or HTTPS URIs. In a
                 List-Unsubscribe Header the HTTP or HTTPS URI is intended to unsubscribe the
                 recipient of the email from the list. But anti-spam software often
                 fetches all resources in mail headers automatically, without any action
                 by the user.
                 As a result of this unintended malicious behavior, senders implement
                 landing pages with a confirmation step to finish the unsubscribe
-                request. This document addresses this part of the problem, with a POST
+                request.
+            </t>
+            <t>
+                If a mail recipient is unsubscribing manually, the confirmation
+                page is presented to the recipient who can then click the appropriate
+                button.
+                But in some cases, there is no direct user interaction with the
+                target web site, as when the unsubscription is a side effect of
+                a spam report, or is performed automatically on mail sent to
+                an abandoned mailbox.
+                In those cases, the unsubscription process has to work without
+                manual intervention, and in particular without requiring that
+                software attempt to interpret the contents of a confirmation page.
+            </t>
+            <t>
+                This document addresses this part of the problem, with a POST
                 action for receivers that can be distinguished by senders from other
-                requests and therefore handled as a one-click unsubscription.
+                requests and therefore handled as a one-click unsubscription without
+                manual intervention by the mail recipient.
             </t>
         </section>
         <section title="Definitions">
@@ -82,7 +96,7 @@
                 The capitalized key words "MUST", "MUST NOT", "REQUIRED", "SHALL",
                 "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and
                 "OPTIONAL" in this document are to be interpreted as described in
-                <xref target="RFC2119" />.
+                <xref target="RFC2119"/>.
             </t>
             <t>
                 One-click describes an action that directly triggers a change in a
@@ -94,7 +108,9 @@
                 <list style="symbols">
                     <t>
                         Allow email senders to signal "One-Click" functionality for specific
-                        HTTP and HTTPS URIs used in <xref target="RFC2369" /> email headers.
+                        HTTP and HTTPS URIs used in
+                        <xref target="RFC2369"/>
+                        email headers.
                     </t>
                     <t>
                         Allow MUA designers to implement independent user interface features for
@@ -109,7 +125,7 @@
         </section>
         <section title="Out of Scope">
             <t>
-                This document does not address problems associated with intended
+                This document does not address problems associated with deliberate
                 malicious behavior.
             </t>
         </section>
@@ -118,16 +134,16 @@
                 <t>
                     An entity which is responsible for sending an email that wishes to add
                     an HTTP or HTTPS URI for one-click unsubscriptions places both a
-                    List-Unsubscribe and a List-Unsubscribe-Post header in the message.  The
+                    List-Unsubscribe and a List-Unsubscribe-Post header in the message. The
                     List-Unsubscribe-Post header may contain multiple key value pairs needed
-                    by the sending entity.  It also MUST contain the key value pair
+                    by the sending entity. It also MUST contain the key value pair
                     "List-Unsubscribe=One-Click".
                 </t>
                 <t>
                     The combination of the URI in the List-Unsubscribe header and the POST
                     arguments in the List-Unsubscribe-Post header MUST identify the mail
                     recipient, so that the unsubscription process knows what address to
-                    handle.  In particular, "one click" has no way to manually ask the user
+                    handle. In particular, "one click" has no way to manually ask the user
                     what address he or she wishes to unsubscribe.
                 </t>
                 <t>
@@ -136,37 +152,37 @@
                 </t>
                 <t>
                     The "One-Click" action triggered by this URI SHOULD complete promptly
-                    and not burden the requester in an inappropriate way.  The sending entity
+                    and not burden the requester in an inappropriate way. The sending entity
                     cannot expect that HTTP redirects are followed by the requester.
                 </t>
             </section>
             <section title="Mail receivers">
                 <t>
-                    A receiving entity which wants to use a List-Unsubscribe HTTP URI
-                    from an email that also contains a List-Unsubscribe-Post header
-                    performs an HTTP or HTTPS POST to the first HTTP or HTTPS URI in the
-                    List-Unsubscribe header and send the content of the List-Unsubscribe-
-                    Post header as the request body.
+                    A receiving entity which wants to use a List-Unsubscribe HTTP URI from
+                    an email that also contains a List-Unsubscribe-Post header performs an
+                    HTTP or HTTPS POST to the first HTTP or HTTPS URI in the
+                    List-Unsubscribe header and send the content of the
+                    List-Unsubscribe-Post header as the request body.
                 </t>
                 <t>
-                    The POST content SHOULD be sent as "multipart/form-data" <xref target="RFC7578" />
-                    and MAY be sent as "application/x-www-form-urlencoded".  These
-                    encodings are the ones used by web browsers when sending forms.  The
-                    target of the POST action will typically be the same as or similar to
-                    the one in the confirmation page when doing a manual two-click
-                    unsubscribe, so this is intended to allow the same server code to
-                    handle both.
+                    The POST content SHOULD be sent as
+                    <xref target="RFC7578">"multipart/form-data"</xref>
+                    and MAY be sent as "application/x-www-form-urlencoded".
+                    These encodings are the ones used by web browsers when sending forms.
+                    The target of the POST action will typically be the same as or similar to
+                    the one in the manual confirmation
+                    page when doing a two-click unsubscribe, so this is intended to allow the same
+                    server code to handle both.
                 </t>
                 <t>
                     The receiving entity MUST NOT perform a POST on the the HTTP or HTTPS
-                    URI without user consent.  When and how the user consent is obtained
-                    is not part of this specification.
+                    URI without user consent. When and how the user consent is obtained is
+                    not part of this specification.
                 </t>
                 <t>
-                    The Request uses the HTTP or HTTPS verb POST.  The HEAD and GET
-                    requests are not intended to be used to trigger a state change.  PUT
-                    and DELETE would offer similar functionality but are often
-                    unavailable.
+                    The Request uses the HTTP or HTTPS verb POST. The HEAD and GET requests
+                    are not intended to be used to trigger a state change. PUT and DELETE
+                    would offer similar functionality but are often unavailable.
                 </t>
             </section>
         </section>
@@ -174,11 +190,12 @@
             <t>
                 The email needs at least one valid authentication identifier. In this
                 version of the specification the only supported identifier type is DKIM
-                <xref target="RFC6376" />, that provides a domain-level identifier in the content of the
+                <xref target="RFC6376"/>, that provides a domain-level identifier in the content of the
                 "d=" tag of a validated DKIM-Signature header field.
             </t>
             <t>
                 The List-Unsubscribe and List-Unsubscribe-Post headers need to be
+                covered by the signature, and hence must be
                 included in the "h=" tag of a valid DKIM-Signature header field.
             </t>
         </section>
@@ -230,7 +247,7 @@ List-Unsubscribe=One-Click&recip=user@example.com
                     <artwork><![CDATA[
 List-Unsubscribe: <mailto:listrequest@example.com?subject=unsubscribe>,
     <https://example.com/unsubscribe.html?campaign=123456789>
-List-Unsubscribe-Post: List-Unsubscribe=One-Click
+List-Unsubscribe-Post: List-Unsubscribe=One-Click&recip=user@example.com
 ]]></artwork>
                 </figure>
                 <figure>
@@ -254,6 +271,14 @@ List-Unsubscribe=One-Click&recip=user@example.com
                 the recipient of the message, but that's typically the case with
                 existing List-Unsubscribe, just with more steps.
             </t>
+            <t>
+                A creative mailer could send spam with content intended to provoke large numbers
+                of unsubscriptions, with suitably crafted headers to send POST
+                requests with arbitrary contents to servers that perhaps don't want them.
+                But it's been possible to provoke GET requests in a similar way for a long
+                time (and much easier, due to spam filter auto-fetches) so the chances of
+                significantly increased annoyance seem low.
+            </t>
         </section>
     </middle>
     <back>
@@ -263,5 +288,17 @@ List-Unsubscribe=One-Click&recip=user@example.com
             &RFC6376;
             &RFC7578;
         </references>
+        <section title="Change Log">
+            <t>
+                Remove this section before publication, please.
+            </t>
+            <section title="Changes from -02 to -03">
+                <t>
+                    Describe motivation in intro.
+                    Clarify required DKIM.
+                    More paranoid scenarios.
+                </t>
+            </section>
+        </section>
     </back>
 </rfc>
