@@ -14,7 +14,7 @@
 <?rfc symrefs="yes" ?>
 <?rfc sortrefs="yes"?>
 <?rfc iprnotified="no" ?>
-<rfc category="std" docName="draft-levine-herkula-oneclick-03" ipr="trust200902">
+<rfc category="std" docName="draft-levine-herkula-oneclick-04" ipr="trust200902">
     <front>
         <title abbrev="One click unsubscribe">Signalling one-click functionality for list email headers</title>
         <author fullname="John Levine" initials="J." surname="Levine">
@@ -54,7 +54,7 @@
                 This document describes a method for signaling a one-click function for
                 the list-unsubscribe email header. The need for this arises out of the
                 actuality that mail software sometimes fetches URLs in mail headers, and
-                thereby accidentally triggers unsubcriptions in the case of the
+                thereby accidentally triggers unsubscriptions in the case of the
                 list-unsubscribe header.
             </t>
         </abstract>
@@ -63,8 +63,8 @@
         <section title="Introduction">
             <t>
                 An <xref target="RFC2369"/>
-                email header can contain HTTP or HTTPS URIs. In a
-                List-Unsubscribe Header the HTTP or HTTPS URI is intended to unsubscribe the
+                email header can contain  HTTPS URIs. In a
+                List-Unsubscribe Header the HTTPS URI is intended to unsubscribe the
                 recipient of the email from the list. But anti-spam software often
                 fetches all resources in mail headers automatically, without any action
                 by the user.
@@ -82,24 +82,34 @@
                 an abandoned mailbox.
                 In those cases, the unsubscription process has to work without
                 manual intervention, and in particular without requiring that
-                software attempt to interpret the contents of a confirmation page.
+		software attempt to interpret the contents of a confirmation page.
             </t>
             <t>
                 This document addresses this part of the problem, with a POST
-                action for receivers that can be distinguished by senders from other
-                requests and therefore handled as a one-click unsubscription without
+                action for receivers that senders can distinguish from other
+                requests and handle as a one-click unsubscription without
                 manual intervention by the mail recipient.
+            </t>
+	    <t>
+	       A List-Unsubscribe header can also contain a mailto: URI with an
+	       address to which an unsubscription request is sent.
+	       While these URIs could be used in a one-click fashion, experience
+	       has shown that they do not work well in high volume environments,
+	       because the recipient mail systems (typically e-mail service providers
+	       that are optimized to send large volumes of mail) cannot keep up with the
+	       required number of mailed removal requests.
+	       Hence this document considers only HTTPS URIs.
             </t>
         </section>
         <section title="Definitions">
             <t>
-                The capitalized key words "MUST", "MUST NOT", "REQUIRED", "SHALL",
+                The key words "MUST", "MUST NOT", "REQUIRED", "SHALL",
                 "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and
                 "OPTIONAL" in this document are to be interpreted as described in
-                <xref target="RFC2119"/>.
+                <xref target="RFC2119"/> when written in all capital letters.
             </t>
             <t>
-                One-click describes an action that directly triggers a change in a
+                "One-click" describes an action that directly triggers a change in a
                 system's state, intended to be applied only with a user's intent.
             </t>
         </section>
@@ -107,8 +117,8 @@
             <t>This document has several goals.
                 <list style="symbols">
                     <t>
-                        Allow email senders to signal "One-Click" functionality for specific
-                        HTTP and HTTPS URIs used in
+                        Allow email senders to signal One-Click functionality for specific
+                        HTTPS URIs used in
                         <xref target="RFC2369"/>
                         email headers.
                     </t>
@@ -133,7 +143,7 @@
             <section title="Mail senders">
                 <t>
                     An entity which is responsible for sending an email that wishes to add
-                    an HTTP or HTTPS URI for one-click unsubscriptions places both a
+                    an HTTPS URI for one-click unsubscriptions places both a
                     List-Unsubscribe and a List-Unsubscribe-Post header in the message. The
                     List-Unsubscribe-Post header may contain multiple key value pairs needed
                     by the sending entity. It also MUST contain the key value pair
@@ -143,15 +153,17 @@
                     The combination of the URI in the List-Unsubscribe header and the POST
                     arguments in the List-Unsubscribe-Post header MUST identify the mail
                     recipient, so that the unsubscription process knows what address to
-                    handle. In particular, "one click" has no way to manually ask the user
+                    handle. In particular, One-click has no way to manually ask the user
                     what address he or she wishes to unsubscribe.
                 </t>
                 <t>
                     The sending entity needs to provide the infrastructure to handle POST
-                    requests to the specified URI in the List-Unsubscribe header.
+                    requests to the specified URI in the List-Unsubscribe header, and to
+		    handle the reasonably foreseeable volume of unsubscribe requests that
+		    its mail will provoke.
                 </t>
                 <t>
-                    The "One-Click" action triggered by this URI SHOULD complete promptly
+                    The One-Click action triggered by this URI SHOULD complete promptly
                     and not burden the requester in an inappropriate way. The sending entity
                     cannot expect that HTTP redirects are followed by the requester.
                 </t>
@@ -160,7 +172,7 @@
                 <t>
                     A receiving entity which wants to use a List-Unsubscribe HTTP URI from
                     an email that also contains a List-Unsubscribe-Post header performs an
-                    HTTP or HTTPS POST to the first HTTP or HTTPS URI in the
+                    HTTPS POST to the first HTTPS URI in the
                     List-Unsubscribe header and send the content of the
                     List-Unsubscribe-Post header as the request body.
                 </t>
@@ -175,12 +187,12 @@
                     server code to handle both.
                 </t>
                 <t>
-                    The receiving entity MUST NOT perform a POST on the the HTTP or HTTPS
+                    The receiving entity MUST NOT perform a POST on the the HTTPS
                     URI without user consent. When and how the user consent is obtained is
                     not part of this specification.
                 </t>
                 <t>
-                    The Request uses the HTTP or HTTPS verb POST. The HEAD and GET requests
+                    The Request uses the HTTPS verb POST. The HEAD and GET requests
                     are not intended to be used to trigger a state change. PUT and DELETE
                     would offer similar functionality but are often unavailable.
                 </t>
@@ -292,6 +304,11 @@ List-Unsubscribe=One-Click&recip=user@example.com
             <t>
                 Remove this section before publication, please.
             </t>
+            <section title="Changes from -03 to -04">
+                <t>
+		   Require HTTPS. More motivation.
+		</t>
+	    </section>
             <section title="Changes from -02 to -03">
                 <t>
                     Describe motivation in intro.
